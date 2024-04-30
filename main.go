@@ -30,7 +30,7 @@ func main() {
 	router.GET("/cartcheckout", app.BuyFromCart())
 	router.GET("/intantbuy", app.IntantBuy())
 
-	// running on a particular port 
+	// running on a particular port
 	log.Fatal(router.Run(":" + port))
 
 }
