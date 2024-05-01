@@ -101,7 +101,7 @@ func SignUp() gin.HandlerFunc {
 		user.Id = primitive.NewObjectID()
 		user.User_Id = user.Id.Hex()
 
-		token, refresh_toke := tokens.GenerateToken(user.Email, user.First_Name, user.Last_Name, user.User_Id)
+		token, refresh_toke, err := tokens.TokenGenerator(user.Email, user.First_Name, user.Last_Name, user.User_Id)
 		user.Token = token
 		user.Refresh_Token = refresh_toke
 		user.UseCart = make([]models.ProductUser, 0)
@@ -151,20 +151,39 @@ func Login() gin.HandlerFunc {
 			return
 		}
 
-		token, refresh_toke := tokens.GenerateToken(foundUser.Email, foundUser.First_Name, foundUser.Last_Name, foundUser.User_Id)
+		token, refresh_toke, err := tokens.TokenGenerator(foundUser.Email, foundUser.First_Name, foundUser.Last_Name, foundUser.User_Id)
 		defer cancel()
 
-		tokens.UpdateAllTokens(token, refresh_toke, foundUser.User_Id)
+		tokens.UpdateAllToken(token, refresh_toke, foundUser.User_Id)
 		c.JSON(http.StatusFound, foundUser)
-
 	}
 }
 
 // ProductViewrAdmin
 
-// func ProductViewerAdmin() gin.HandlerFunc {
+func ProductViewerAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var products models.Product
+		defer cancel()
 
-// }
+		if err := c.BindJSON(&products); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			c.Abort()
+		}
+
+		products.Product_Id = primitive.NewObjectID()
+		_, anyerr := ProdCollection.InsertOne(ctx, products)
+
+		if anyerr != nil {
+			c.JSON(http.StatusInternalServerError, "something went wrong while creating new product")
+			c.Abort()
+		}
+
+		c.JSON(http.StatusCreated, "product added sucess fully")
+
+	}
+}
 
 // SearchProduct
 

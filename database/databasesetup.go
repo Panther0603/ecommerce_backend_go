@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"log"
-	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,12 +14,12 @@ var Client *mongo.Client = DBset()
 func DBset() *mongo.Client {
 
 	// one way of the connect
-	clientOptions := options.Client().ApplyURI(os.Getenv("DB_URI"))
-	client, err := mongo.Connect(context.Background(), clientOptions)
+	// clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	// client, err := mongo.Connect(context.Background(), clientOptions)
 
 	// another way to connect
 
-	//client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		log.Println("Error occured while creating dataabse")
 		log.Fatal(err)
@@ -51,7 +50,7 @@ func UserData(client *mongo.Client, collectionName string) *mongo.Collection {
 	return collection
 }
 
-func ProductDate(client *mongo.Client, collectionName string) *mongo.Collection {
+func ProductData(client *mongo.Client, collectionName string) *mongo.Collection {
 	collection := client.Database("ecommerce").Collection(collectionName)
 	return collection
 }

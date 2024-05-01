@@ -13,7 +13,7 @@ type Users struct {
 	Password        string             `json:"password" bson:"password" valiadate:"required,min=6"`
 	Email           string             `json:"email" bson:"email" validate:"required"`
 	Phone           string             `json:"phone" bson:"phone" validate:"required"`
-	Token           string             `json:"token" bson:"token" validate:"required"`
+	Token           string             `json:"token" bson:"token"`
 	Refresh_Token   string             `json:"refresh_token" bson:"refresh_token"`
 	User_Id         string             `json:"user_id" bson:"uswr_id"`
 	Created_At      time.Time          `json:"created_at" bson:"created_at"`
